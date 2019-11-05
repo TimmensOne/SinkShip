@@ -165,7 +165,7 @@ int getFieldInt(int i, int j){
 void drawShip(int shipLength){
     //BlockChecker
     do{      
-    printf("Enter Startposition:");
+    printf("Enter Startposition:\n");
     scanf("%s", & shipStart);
     } while (board[getStartRowInput()][getStartColInput()] != 0);
     int rowStart = getStartRowInput();
@@ -174,7 +174,7 @@ void drawShip(int shipLength){
     //LengthChecker
     bool boolean;
     do{
-        printf("Enter Endposition:");
+        printf("Enter Endposition:\n");
         scanf("%s", & shipEnd);
         if (getStartRowInput() == getEndRowInput()){
             if (getEndColInput() - getStartColInput() + 1 == shipLength){
@@ -272,14 +272,14 @@ void secondPlayer(){
 
 void checkPlayer(){
     if (player == 1){
-        printf("Player 1 is tuned\n");
-    } else{
-        printf("Player 2 is tuned\n");
+        printf("Player 1 is tuned in\n");
+    } else if (player == 2){
+        printf("Player 2 is tuned in\n");
     }
 }
 
 void playerFires(){
-    printf("Enter Field:");
+    printf("Enter Field:\n");
     scanf("%s", & fireField);
 }
 
@@ -287,27 +287,86 @@ void blockAround(){
 }
 
 void checkSunkenShip(){
+    int shipLength = 0;
+    int count = 0;
+    if (player == 1){
+        printf("%d\n",enemyBoardPlayer1[getFireRowInput()][getFireColInput()]);
+        //
+        shipLength = enemyBoardPlayer1[getFireRowInput()][getFireColInput()];
+        for (int i = getFireRowInput() - shipLength + 1; i < getFireRowInput() + shipLength; i++){
+            if (enemyBoardPlayer1[i][getFireColInput()] == shipLength){
+                count++;
+            }
+            printf("%d\n", count);
+            //
+        }
+        if (count == shipLength){
+            blockAround();
+            printf("Ship has sunk\n");
+        } else{
+            count = 0;
+        }
+        for (int j = getFireColInput()-shipLength + 1; j < getFireColInput() + shipLength; j++){
+            if (enemyBoardPlayer1[getFireRowInput()][j] == shipLength){
+                count++;
+            }
+            printf("%d\n",count);
+            //
+        }
+        if (count == shipLength){
+            blockAround();
+            printf("Ship has sunk\n");
+        } else{
+            count = 0;
+        }
+    }else if (player == 2){
+        shipLength = enemyBoardPlayer2[getFireRowInput()][getFireColInput()];
+        for (int i = getFireRowInput() - shipLength + 1; i < getFireRowInput() + shipLength; i++){
+            if (enemyBoardPlayer2[i][getFireColInput()] == shipLength){
+                count++;
+            }
+            printf("%d\n", count);
+            //
+        }
+        if (count == shipLength){
+            blockAround();
+            printf("Ship has sunk\n");
+        } else{
+            count = 0;
+        }
+        for (int j = getFireColInput()-shipLength + 1; j < getFireColInput() + shipLength; j++){
+            if (enemyBoardPlayer2[getFireRowInput()][j] == shipLength){
+                count++;
+            }
+            printf("%d\n",count);
+            //
+        }
+        if (count == shipLength){
+            blockAround();
+            printf("Ship has sunk\n");
+        } else{
+            count = 0;
+        }
+    }
 }
 
 void enterHit(){
-    printf("Hit Ship");
+    printf("Hit Ship\n");
     if (player == 1){
-        enemyBoardPlayer1[getFireRowInput()][getStartColInput()] = ownBoardPlayer2[getFireRowInput()][getFireColInput()];
+        enemyBoardPlayer1[getFireRowInput()][getFireColInput()] = ownBoardPlayer2[getFireRowInput()][getFireColInput()];
         checkSunkenShip();
-    }
-    if (player == 2){
-        enemyBoardPlayer2[getFireRowInput()][getStartColInput()] = ownBoardPlayer1[getFireRowInput()][getFireColInput()];
+    }else if (player == 2){
+        enemyBoardPlayer2[getFireRowInput()][getFireColInput()] = ownBoardPlayer1[getFireRowInput()][getFireColInput()];
         checkSunkenShip();
     }
 }
 
 void enterNoHit(){
-    printf("Missed Ship");
+    printf("Missed Ship\n");
     if (player == 1){
-        enemyBoardPlayer1[getFireRowInput()][getStartColInput()] = 6;
-    }
-    if (player == 2){
-        enemyBoardPlayer2[getFireRowInput()][getStartColInput()] = 6;
+        enemyBoardPlayer1[getFireRowInput()][getFireColInput()] = 1;
+    }else if (player == 2){
+        enemyBoardPlayer2[getFireRowInput()][getFireColInput()] = 1;
     }
 }
 
@@ -403,5 +462,5 @@ int main (){
     firstPlayer();
     secondPlayer();
     play();
-    //printAllBords();
+    printAllBords();
 }
