@@ -2,6 +2,7 @@
 #include <stdbool.h>
 
 bool checkForWinner = false;
+bool hitChecker;
 
 int board[10][10] = {{0,0,0,0,0,0,0,0,0,0},
                     {0,0,0,0,0,0,0,0,0,0},
@@ -61,8 +62,12 @@ int enemyBoardPlayer2[10][10] = {{0,0,0,0,0,0,0,0,0,0},
 char shipStart[2];
 char shipEnd[2];
 
+char fireField[2];
+
 const char rowTitles[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
 const char colTitles[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'};
+
+int player = 1;
 
 void printBoard(){
     printf("\n    %c   %c   %c   %c   %c   %c   %c   %c   %c   %c", colTitles[0], colTitles[1], colTitles[2], colTitles[3], colTitles[4], colTitles[5], colTitles[6], colTitles[7], colTitles[8], colTitles[9]);
@@ -135,6 +140,24 @@ int getEndColInput() {
     return 0;
 }
 
+int getFireRowInput() {
+    for (int i = 0; i < 10; i++){
+        if (rowTitles[i] == fireField[0]){
+            return i;
+        }
+    }
+    return 0;
+}
+
+int getFireColInput() {
+    for (int i = 0; i < 10; i++){
+        if (colTitles[i] == fireField[1]){
+            return i;
+        }  
+    }
+    return 0;
+}
+
 int getFieldInt(int i, int j){
     return board[i][j];
 }
@@ -198,16 +221,16 @@ void drawShip(int shipLength){
 }
 
 void drawShips(){
-    for (int i = 4; i > 0; i--){
+    //for (int i = 4; i > 0; i--){
         drawShip(2);
-    }
-    for (int i = 3; i > 0; i--){
-        drawShip(3);
-    }
-    for (int i = 2; i > 0; i--){
-        drawShip(4);
-    }
-    drawShip(5);
+    //}
+    //for (int i = 3; i > 0; i--){
+    //    drawShip(3);
+    //}
+    //for (int i = 2; i > 0; i--){
+    //    drawShip(4);
+    //}
+    //drawShip(5);
 }
 
 void resetBoard(){
@@ -247,14 +270,138 @@ void secondPlayer(){
     saveBoardPlayer2();
 }
 
-void startGame(){
-    
+void checkPlayer(){
+    if (player == 1){
+        printf("Player 1 is tuned\n");
+    } else{
+        printf("Player 2 is tuned\n");
+    }
+}
+
+void playerFires(){
+    printf("Enter Field:");
+    scanf("%s", & fireField);
+}
+
+void blockAround(){
+}
+
+void checkSunkenShip(){
+}
+
+void enterHit(){
+    printf("Hit Ship");
+    if (player == 1){
+        enemyBoardPlayer1[getFireRowInput()][getStartColInput()] = ownBoardPlayer2[getFireRowInput()][getFireColInput()];
+        checkSunkenShip();
+    }
+    if (player == 2){
+        enemyBoardPlayer2[getFireRowInput()][getStartColInput()] = ownBoardPlayer1[getFireRowInput()][getFireColInput()];
+        checkSunkenShip();
+    }
+}
+
+void enterNoHit(){
+    printf("Missed Ship");
+    if (player == 1){
+        enemyBoardPlayer1[getFireRowInput()][getStartColInput()] = 6;
+    }
+    if (player == 2){
+        enemyBoardPlayer2[getFireRowInput()][getStartColInput()] = 6;
+    }
+}
+
+void checkHit(){
+    if (player == 1){
+        if (ownBoardPlayer2[getFireRowInput()][getFireColInput()] == 0){
+            hitChecker = false;
+            enterNoHit();
+        } else if(ownBoardPlayer2[getFireRowInput()][getFireColInput()] == 1){
+            hitChecker = false;
+            enterNoHit();
+        } else{
+            hitChecker = true;
+            enterHit();
+        }
+    } else if (player ==2){
+        if (ownBoardPlayer1[getFireRowInput()][getFireColInput()] == 0){
+            hitChecker = false;
+            enterNoHit();
+        } else if(ownBoardPlayer1[getFireRowInput()][getFireColInput()] == 1){
+            hitChecker = false;
+            enterNoHit();
+        } else{
+            hitChecker = true;
+            enterHit();
+        }
+    }
+}
+
+void changePlayer(){
+    if (player == 1){
+        player = 2;
+        printf("Changed Player to 2\n");
+    }else if (player  == 2){
+        player = 1;
+        printf("Changed Player to 1\n");
+    }
+}
+
+void play(){
+    for (int i = 0; i < 2; i++){  
+    //do{
+        checkPlayer(); 
+        do{
+            playerFires();
+            checkHit();
+        } while (hitChecker);
+        //AllSunken();
+        changePlayer();
+    //} while (checkForWinner);
+    }
+}
+
+void printAllBords(){
+    for (int i = 0; i < 10; i++){
+        for (int j = 0; j < 10; j++){
+            printf("%d", board[i][j]);
+        }
+        printf("\n");
+    }
+    printf("\n");
+    for (int i = 0; i < 10; i++){
+        for (int j = 0; j < 10; j++){
+            printf("%d", ownBoardPlayer1[i][j]);
+        }
+        printf("\n");
+    }
+    printf("\n");
+    for (int i = 0; i < 10; i++){
+        for (int j = 0; j < 10; j++){
+            printf("%d", ownBoardPlayer2[i][j]);
+        }
+        printf("\n");
+    }
+    printf("\n");
+    for (int i = 0; i < 10; i++){
+        for (int j = 0; j < 10; j++){
+            printf("%d", enemyBoardPlayer1[i][j]);
+        }
+        printf("\n");
+    }
+    printf("\n");
+    for (int i = 0; i < 10; i++){
+        for (int j = 0; j < 10; j++){
+            printf("%d", enemyBoardPlayer2[i][j]);
+        }
+        printf("\n");
+    }
+    printf("\n");
 }
 
 int main (){
-    do{
     firstPlayer();
     secondPlayer();
-    //startGame();
-    } while (checkForWinner);
+    play();
+    //printAllBords();
 }
