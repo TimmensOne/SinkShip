@@ -14,7 +14,40 @@ int board[10][10] = {{0,0,0,0,0,0,0,0,0,0},
                     {0,0,0,0,0,0,0,0,0,0},
                     {0,0,0,0,0,0,0,0,0,0}};
 
-int enemyBoard[10][10] = {{0,0,0,0,0,0,0,0,0,0},
+int ownBoardPlayer1[10][10] = {{0,0,0,0,0,0,0,0,0,0},
+                    {0,0,0,0,0,0,0,0,0,0},
+                    {0,0,0,0,0,0,0,0,0,0},
+                    {0,0,0,0,0,0,0,0,0,0},
+                    {0,0,0,0,0,0,0,0,0,0},
+                    {0,0,0,0,0,0,0,0,0,0},
+                    {0,0,0,0,0,0,0,0,0,0},
+                    {0,0,0,0,0,0,0,0,0,0},
+                    {0,0,0,0,0,0,0,0,0,0},
+                    {0,0,0,0,0,0,0,0,0,0}};
+
+int ownBoardPlayer2[10][10] = {{0,0,0,0,0,0,0,0,0,0},
+                    {0,0,0,0,0,0,0,0,0,0},
+                    {0,0,0,0,0,0,0,0,0,0},
+                    {0,0,0,0,0,0,0,0,0,0},
+                    {0,0,0,0,0,0,0,0,0,0},
+                    {0,0,0,0,0,0,0,0,0,0},
+                    {0,0,0,0,0,0,0,0,0,0},
+                    {0,0,0,0,0,0,0,0,0,0},
+                    {0,0,0,0,0,0,0,0,0,0},
+                    {0,0,0,0,0,0,0,0,0,0}};
+
+int enemyBoardPlayer1[10][10] = {{0,0,0,0,0,0,0,0,0,0},
+                    {0,0,0,0,0,0,0,0,0,0},
+                    {0,0,0,0,0,0,0,0,0,0},
+                    {0,0,0,0,0,0,0,0,0,0},
+                    {0,0,0,0,0,0,0,0,0,0},
+                    {0,0,0,0,0,0,0,0,0,0},
+                    {0,0,0,0,0,0,0,0,0,0},
+                    {0,0,0,0,0,0,0,0,0,0},
+                    {0,0,0,0,0,0,0,0,0,0},
+                    {0,0,0,0,0,0,0,0,0,0}};
+
+int enemyBoardPlayer2[10][10] = {{0,0,0,0,0,0,0,0,0,0},
                     {0,0,0,0,0,0,0,0,0,0},
                     {0,0,0,0,0,0,0,0,0,0},
                     {0,0,0,0,0,0,0,0,0,0},
@@ -27,8 +60,6 @@ int enemyBoard[10][10] = {{0,0,0,0,0,0,0,0,0,0},
 
 char shipStart[2];
 char shipEnd[2];
-char possibleRowEnd[2];
-char possibleColEnd[2];
 
 const char rowTitles[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
 const char colTitles[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'};
@@ -59,6 +90,9 @@ void printBoard(){
             else if (board[row][col] == 5){
                 printf(" 5 ");
             }
+            else if (board[row][col] == 6){
+                printf(" S ");
+            }           
             printf("|");
         }
     printf("\n  -----------------------------------------\n");
@@ -99,6 +133,10 @@ int getEndColInput() {
         }  
     }
     return 0;
+}
+
+int getFieldInt(int i, int j){
+    return board[i][j];
 }
 
 void drawShip(int shipLength){
@@ -160,34 +198,63 @@ void drawShip(int shipLength){
 }
 
 void drawShips(){
-    //for (int i = 4; i > 0; i--){
+    for (int i = 4; i > 0; i--){
         drawShip(2);
-    //}
-    //for (int i = 3; i > 0; i--){
+    }
+    for (int i = 3; i > 0; i--){
         drawShip(3);
-    //}
-    //for (int i = 2; i > 0; i--){
-    //    drawShip(4);
-    //}
-    //drawShip(5);
+    }
+    for (int i = 2; i > 0; i--){
+        drawShip(4);
+    }
+    drawShip(5);
+}
+
+void resetBoard(){
+    for (int i = 0; i < 10; i++){
+        for (int j = 0; j < 10; j++){
+            board[i][j] = 0;
+        }
+    }
+}
+
+void saveBoardPlayer1(){
+    for (int i = 0; i < 10; i++){
+        for (int j = 0; j < 10; j++){
+            int number = getFieldInt(i,j);
+            ownBoardPlayer1[i][j] = number;
+        }
+    }
+    resetBoard();
+}
+
+void saveBoardPlayer2(){
+    for (int i = 0; i < 10; i++){
+        for (int j = 0; j < 10; j++){
+            ownBoardPlayer2[i][j] = board[i][j];
+        }
+    }
+    resetBoard();
 }
 
 void firstPlayer(){
     drawShips();
+    saveBoardPlayer1();
 }
 
 void secondPlayer(){
     drawShips();
+    saveBoardPlayer2();
 }
 
 void startGame(){
-    printBoard();
+    
 }
 
 int main (){
     do{
     firstPlayer();
     secondPlayer();
-    startGame();
+    //startGame();
     } while (checkForWinner);
 }
