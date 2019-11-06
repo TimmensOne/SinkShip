@@ -59,6 +59,8 @@ int enemyBoardPlayer2[10][10] = {{0,0,0,0,0,0,0,0,0,0},
                     {0,0,0,0,0,0,0,0,0,0},
                     {0,0,0,0,0,0,0,0,0,0}};
 
+int boardStatistics[5][2] = {{0,0},{0,0},{0,0},{0,0},{0,0}};
+
 char shipStart[2];
 char shipEnd[2];
 
@@ -67,7 +69,12 @@ char fireField[2];
 const char rowTitles[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
 const char colTitles[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'};
 
+const char rowTitlesStatistics[] = {'t','2','3','4','5'};
+
 int player = 1;
+
+int totalPlayer1 = 0;
+int totalPlayer2 = 0;
 
 void printBoard(){
     printf("\n    %c   %c   %c   %c   %c   %c   %c   %c   %c   %c", colTitles[0], colTitles[1], colTitles[2], colTitles[3], colTitles[4], colTitles[5], colTitles[6], colTitles[7], colTitles[8], colTitles[9]);
@@ -158,14 +165,10 @@ int getFireColInput() {
     return 0;
 }
 
-int getFieldInt(int i, int j){
-    return board[i][j];
-}
-
 void drawShip(int shipLength){
     //BlockChecker
     do{      
-    printf("Enter Startposition:\n");
+    printf("Enter Startposition (e.g. A1):\n");
     scanf("%s", & shipStart);
     } while (board[getStartRowInput()][getStartColInput()] != 0);
     int rowStart = getStartRowInput();
@@ -174,7 +177,7 @@ void drawShip(int shipLength){
     //LengthChecker
     bool boolean;
     do{
-        printf("Enter Endposition:\n");
+        printf("Enter Endposition (e.g. A2):\n");
         scanf("%s", & shipEnd);
         if (getStartRowInput() == getEndRowInput()){
             if (getEndColInput() - getStartColInput() + 1 == shipLength){
@@ -222,15 +225,21 @@ void drawShip(int shipLength){
 
 void drawShips(){
     //for (int i = 4; i > 0; i--){
+        printf("\nShiplength: 2\n");
         drawShip(2);
     //}
-    //for (int i = 3; i > 0; i--){
-    //    drawShip(3);
-    //}
-    //for (int i = 2; i > 0; i--){
-    //    drawShip(4);
-    //}
-    //drawShip(5);
+    /*
+    for (int i = 3; i > 0; i--){
+        printf("\nShiplength: 3\n");
+        drawShip(3);
+    }
+    for (int i = 2; i > 0; i--){
+        printf("\nShiplength: 4\n");
+        drawShip(4);
+    }
+    printf("\nShiplength: 5\n");
+    drawShip(5);
+    */
 }
 
 void resetBoard(){
@@ -244,8 +253,7 @@ void resetBoard(){
 void saveBoardPlayer1(){
     for (int i = 0; i < 10; i++){
         for (int j = 0; j < 10; j++){
-            int number = getFieldInt(i,j);
-            ownBoardPlayer1[i][j] = number;
+            ownBoardPlayer1[i][j] = board[i][j];
         }
     }
     resetBoard();
@@ -261,11 +269,17 @@ void saveBoardPlayer2(){
 }
 
 void firstPlayer(){
+    printf("\nPlayer 1 is on the line.\n");
+    printf("\nPlease enter Startposition and Endpoisition of your Ships.\n");
+    printf("Every player has the same amount of ships:\n 4x 2-ship, 3x 3-ship, 2x 4-ship, 1x 5-ship\n");
     drawShips();
     saveBoardPlayer1();
 }
 
 void secondPlayer(){
+    printf("\nPlayer 2 is on the line.\n");
+    printf("\nPlease enter Startposition and Endpoisition of your Ships.\n");
+    printf("Every player has the same amount of ships:\n 4x 2-ship, 3x 3-ship, 2x 4-ship, 1x 5-ship\n");
     drawShips();
     saveBoardPlayer2();
 }
@@ -278,31 +292,71 @@ void checkPlayer(){
     }
 }
 
+void printEnemy(){
+    if (player == 1){
+        for (int i = 0; i < 10; i++){
+            for (int j = 0; j < 10; j++){
+                board[i][j] = enemyBoardPlayer1[i][j];
+            }
+        }
+        printBoard();
+        resetBoard();
+    }else if (player == 2){
+        for (int i = 0; i < 10; i++){
+            for (int j = 0; j < 10; j++){
+                board[i][j] = enemyBoardPlayer2[i][j];
+            }
+        }
+        printBoard();
+        resetBoard();
+    }
+}
+
 void playerFires(){
     printf("Enter Field:\n");
     scanf("%s", & fireField);
 }
 
-void blockAround(){
+//need update!
+void blockAround(int shipLength){
+    if (player == 1){
+        int i;
+        int j;
+        //do{
+            for (i = getFireRowInput()-1; i <= getFireRowInput()+1; i++){
+                for (j = getFireColInput()-1; j <= getFireColInput()+1; j++){
+                    enemyBoardPlayer1[i][j] = ownBoardPlayer2[i][j];
+                }
+            }
+        //} while (enemyBoardPlayer1[i][j] != shipLength);
+    } else if(player == 2){
+        int i;
+        int j;
+        //do{
+            for (i = getFireRowInput()-1; i <= getFireRowInput()+1; i++){
+                for (j = getFireColInput()-1; j <= getFireColInput()+1; j++){
+                    enemyBoardPlayer2[i][j] = ownBoardPlayer1[i][j];
+                }
+            }
+        //} while (enemyBoardPlayer1[i][j] != shipLength);
+    }
 }
 
 void checkSunkenShip(){
     int shipLength = 0;
     int count = 0;
     if (player == 1){
-        printf("%d\n",enemyBoardPlayer1[getFireRowInput()][getFireColInput()]);
-        //
         shipLength = enemyBoardPlayer1[getFireRowInput()][getFireColInput()];
         for (int i = getFireRowInput() - shipLength + 1; i < getFireRowInput() + shipLength; i++){
             if (enemyBoardPlayer1[i][getFireColInput()] == shipLength){
                 count++;
             }
-            printf("%d\n", count);
-            //
         }
         if (count == shipLength){
-            blockAround();
+            //need update!
+            blockAround(shipLength);
             printf("Ship has sunk\n");
+            totalPlayer1++;
         } else{
             count = 0;
         }
@@ -310,12 +364,12 @@ void checkSunkenShip(){
             if (enemyBoardPlayer1[getFireRowInput()][j] == shipLength){
                 count++;
             }
-            printf("%d\n",count);
-            //
         }
         if (count == shipLength){
-            blockAround();
+            //need update!
+            blockAround(shipLength);
             printf("Ship has sunk\n");
+            totalPlayer1++;
         } else{
             count = 0;
         }
@@ -325,12 +379,12 @@ void checkSunkenShip(){
             if (enemyBoardPlayer2[i][getFireColInput()] == shipLength){
                 count++;
             }
-            printf("%d\n", count);
-            //
         }
         if (count == shipLength){
-            blockAround();
+            //need update!
+            blockAround(shipLength);
             printf("Ship has sunk\n");
+            totalPlayer2++;
         } else{
             count = 0;
         }
@@ -338,16 +392,18 @@ void checkSunkenShip(){
             if (enemyBoardPlayer2[getFireRowInput()][j] == shipLength){
                 count++;
             }
-            printf("%d\n",count);
-            //
         }
         if (count == shipLength){
-            blockAround();
+            //need update!
+            blockAround(shipLength);
             printf("Ship has sunk\n");
+            totalPlayer2++;
         } else{
             count = 0;
         }
     }
+    //need update!
+    //boardStatistics[player-1][shipLength] += 1;
 }
 
 void enterHit(){
@@ -406,18 +462,57 @@ void changePlayer(){
     }
 }
 
+void printStatistics(){
+    printf("   P1   P2");
+
+    printf("\n   ----------\n");
+    for (int row = 0; row < 5; row++){
+        printf("%c ", rowTitlesStatistics[row]);
+        printf("|");
+        for (int col = 0; col < 2; col++){
+            if (boardStatistics[row][col] == 0){
+                printf(" 0 ");
+            }else if (boardStatistics[row][col] == 1){
+                printf(" 1 ");
+            }else if (boardStatistics[row][col] == 2){
+                printf(" 2 ");
+            }else if (boardStatistics[row][col] == 3){
+                printf(" 3 ");
+            }else if (boardStatistics[row][col] == 4){
+                printf(" 4 ");
+            }else if (boardStatistics[row][col] == 5){
+                printf(" 5 ");
+            }else if (boardStatistics[row][col] == 6){
+                printf(" 6 ");
+            }else if (boardStatistics[row][col] == 7){
+                printf(" 7 ");
+            }else if (boardStatistics[row][col] == 8){
+                printf(" 8 ");
+            }else if (boardStatistics[row][col] == 9){
+                printf(" 9 ");
+            }else if (boardStatistics[row][col] == 10){
+                printf(" 10");
+            }
+            printf("|");
+        }
+    printf("\n  -----------\n");
+    }
+}
+
 void play(){
-    for (int i = 0; i < 2; i++){  
-    //do{
+    do{
         checkPlayer(); 
         do{
+            printEnemy();
             playerFires();
             checkHit();
+            if (totalPlayer1 != 10 || totalPlayer2 != 10){
+                break;
+            }
         } while (hitChecker);
-        //AllSunken();
+        //printStatistics();
         changePlayer();
-    //} while (checkForWinner);
-    }
+    } while (totalPlayer1 != 10 || totalPlayer2 != 10);
 }
 
 void printAllBords(){
@@ -458,9 +553,12 @@ void printAllBords(){
     printf("\n");
 }
 
+//need update!
+//In play --> checkHit --> enterHit --> checkSunkenShip --> blockAround!!!
 int main (){
+    printf(" --- Welcom to sink ships --- \n");
     firstPlayer();
     secondPlayer();
     play();
-    printAllBords();
+    //printAllBords();
 }
