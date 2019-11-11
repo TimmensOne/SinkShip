@@ -1,12 +1,17 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-//Version: 0.1
+//Version: 0.1.2.
 //Owner: TimmensOne
 //Supporter: cyd3r
 
 bool checkForWinner = false;
 bool hitChecker;
+bool directionLeft;
+bool directionRight;
+bool directionTop;
+bool directionBottom;
+bool directionIsTrue;
 
 int board[10][10] = {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
                      {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -201,92 +206,121 @@ void checkBlockedField()
     } while (board[getStartRowInput()][getStartColInput()] != 0);
 }
 
-void checkShipDirections(int rowStart, int colStart, int shiplength, bool directionLeft, bool directionRight, bool directionTop, bool directionBottom)
+//change query
+void checkShipDirections(int rowStart, int colStart, int shiplength)
 {
-    bool position;
-
+    //change query
+    printf("%d %d\n",rowStart, colStart);
     int positionLeft = board[rowStart - shiplength][colStart];
     int positionRight = board[rowStart + shiplength][colStart];
     int positionTop = board[rowStart][colStart - shiplength];
     int positionBottom = board[rowStart][colStart + shiplength];
+    //change query
+    printf("%d left\n%d right\n%d top\n%d bottom", positionLeft, positionRight, positionTop, positionBottom);
 
+    //change query
     if (positionLeft == 0)
     {
         for (int i = 0; i < shiplength; i++)
         {
+            //change query
             if (board[positionLeft + i][colStart] == 0)
             {
-                position = true;
                 directionLeft = true;
+                directionIsTrue = true;
             }
             else
             {
-                position = false;
                 directionLeft = false;
+                directionIsTrue = false;
+                printf("PosLeft isn't Possible");
             }
         }
-    } else {
-        directionLeft = false;
     }
+    else
+    {
+        directionLeft = false;
+        directionIsTrue = false;
+        printf("PosLeft isn't Possible");
+    }
+    //change query
     if (positionRight == 0)
     {
         for (int i = 0; i < shiplength; i++)
         {
+            //change query
             if (board[rowStart][colStart] == 0)
             {
-                position = true;
                 directionRight = true;
+                directionIsTrue = true;
             }
             else
             {
-                position = false;
                 directionRight = false;
+                directionIsTrue = false;
+                printf("PosRight isn't Possible");
             }
         }
-    } else {
-        directionRight = false;
     }
+    else
+    {
+        directionRight = false;
+        directionIsTrue = false;
+        printf("PosRight isn't Possible");
+    }
+    //change query
     if (positionTop == 0)
     {
         for (int i = 0; i < shiplength; i++)
         {
+            //change query
             if (board[rowStart][positionTop + i] == 0)
             {
-                position = true;
                 directionTop = true;
+                directionIsTrue = true;
             }
             else
             {
-                position = false;
-                directionTop = true;
+                directionTop = false;
+                directionIsTrue = false;
+                printf("PosTop isn't Possible");
             }
         }
-    } else {
-        directionTop = false;
     }
+    else
+    {
+        directionTop = false;
+        directionIsTrue = false;
+        printf("PosTop isn't Possible");
+    }
+    //change query
     if (positionBottom == 0)
     {
         for (int i = 0; i < shiplength; i++)
         {
+            //change query
             if (board[rowStart][colStart] == 0)
             {
-                position = true;
                 directionBottom = true;
+                directionIsTrue = true;
             }
             else
             {
-                position = false;
                 directionBottom = false;
+                directionIsTrue = false;
+                printf("PosBottom isn't Possible");
             }
         }
     }
     else
     {
         directionBottom = false;
+        directionIsTrue = false;
+        printf("PosBottom isn't Possible");
     }
 }
 
-void enterSelectedDirection(int direction, int shipLength, bool directionLeft, bool directionRight, bool directionTop, bool directionBottom)
+void enterSelectedDirection(int direction, int shipLength)
 {
     int shipStartXPos;
     int shipStartYPos;
@@ -415,17 +449,18 @@ void drawShip(int shipLenth)
     int colStart = getStartColInput();
 
     //2. check if it can be placed
-    bool directionLeft;
-    bool directionRight;
-    bool directionTop;
-    bool directionBottom;
-    checkShipDirections(rowStart, colStart, shipLenth, directionLeft, directionRight, directionTop, directionBottom);
+    //change query
+    checkShipDirections(rowStart, colStart, shipLenth);
 
     //3. + 4. + 5.
     int direction;
-    printf("Please enter your Direction \n0=right, 1=bottom, 2=left, 3=top\n");
-    scanf("%d", &direction);
-    enterSelectedDirection(direction, shipLenth, directionLeft, directionRight, directionTop, directionBottom);
+    do
+    {
+        printf("Please enter your Direction \n0=right, 1=bottom, 2=left, 3=top\n");
+        scanf("%d", &direction);
+        enterSelectedDirection(direction, shipLenth);
+    } while (!directionIsTrue);
+    
     //6.
     printBoard();
 }
