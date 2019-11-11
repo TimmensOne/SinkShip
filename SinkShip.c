@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+//Version: 0.1
+//Owner: TimmensOne
+//Supporter: cyd3r
+
 bool checkForWinner = false;
 bool hitChecker;
 
@@ -84,27 +88,21 @@ void printBoard(){
         printf("%c ", rowTitles[row]);
         printf("|");
         for (int col = 0; col < 10; col++){
-            if (board[row][col] == 0){
+            switch (board[row][col])
+            {
+            case 0:
                 printf("   ");
-            }
-            else if (board[row][col] == 1){
+                break;
+            case 1:
                 printf(" x ");
-            }
-            else if (board[row][col] == 2){
-                printf(" 2 ");
-            }
-            else if (board[row][col] == 3){
-                printf(" 3 ");
-            }
-            else if (board[row][col] == 4){
-                printf(" 4 ");
-            }
-            else if (board[row][col] == 5){
-                printf(" 5 ");
-            }
-            else if (board[row][col] == 6){
+                break;
+            case 6:
                 printf(" S ");
-            }           
+                break;
+            default:
+                printf(" %d ", board[row][col]);
+                break;
+            }
             printf("|");
         }
     printf("\n  -----------------------------------------\n");
@@ -165,73 +163,157 @@ int getFireColInput() {
     return 0;
 }
 
-void drawShip(int shipLength){
-    //BlockChecker
-    do{      
-    printf("Enter Startposition (e.g. A1):\n");
-    scanf("%s", & shipStart);
-    } while (board[getStartRowInput()][getStartColInput()] != 0);
-    int rowStart = getStartRowInput();
-    int colStart = getStartColInput();
-    //BlockChecker
-    //LengthChecker
-    bool boolean;
+void checkBlockedField(){
     do{
-        printf("Enter Endposition (e.g. A2):\n");
-        scanf("%s", & shipEnd);
-        if (getStartRowInput() == getEndRowInput()){
-            if (getEndColInput() - getStartColInput() + 1 == shipLength){
-                boolean = false;
-            } else{
-                boolean = true;
-            }
-        } else if(getStartColInput() == getEndColInput()){
-            if (getEndRowInput() - getStartRowInput() + 1 == shipLength){
-                boolean = false;
-            } else{
-                boolean = true;
+        printf("Enter Startposition (e.g. A1):\n");
+        scanf("%s", & shipStart);
+        if (board[getStartRowInput()][getStartColInput()] != 0){
+            printf("Pleas try Again. This Field is blocked\n");
+        } else{
+            printf("Perfect\n");
+        }
+    } while (board[getStartRowInput()][getStartColInput()] != 0);
+}
+
+void checkShipDirections(int rowStart, int colStart, int shiplength){
+    int positionLeft;
+    int positionRight;
+    int positionTop;
+    int positionBottom;
+    bool position;
+
+    positionLeft = board[rowStart-shiplength][colStart];
+    positionRight = board[rowStart+shiplength][colStart];
+    positionTop = board[rowStart][colStart-shiplength];
+    positionBottom = board[rowStart][colStart+shiplength];
+
+    do{
+        if (positionLeft == 0){
+            for (int i = 0; i < shiplength; i++){
+                if (board[rowStart-shiplength+i][colStart] == 0){
+                    
+                }
             }
         } else{
-            boolean = true;
+            position = false;
         }
-    } while (boolean);
-    //LengthChecker
-    int rowEnd = getEndRowInput();
-    int colEnd = getEndColInput();
-    //Blocker
-    for (int i = rowStart-1; i <= rowEnd+1; i++){
-        if (i < 0){
-            continue;
-        }else if(i > 9){
-            continue;
+    } while (position);
+}
+
+void enterSelectedDirection(int direction, int shipLength){
+    int shipStartXPos;
+    int shipStartYPos;
+    switch (direction){
+    
+    //right
+    case 0:
+        printf("right enterDirection\n");
+        shipStartXPos = getStartRowInput();
+        shipStartYPos = getStartColInput();
+        for (int i = shipStartXPos-1; i <= shipStartXPos+1  ; i++){
+            for (int j = shipStartYPos-1; j <= shipStartYPos+shipLength+1; j++){
+                board[i][j] = 1;
+            }
         }
-        for (int j = colStart-1; j <= colEnd+1; j++){
-            if (j < 0){
-            continue;
-        }else if(j > 9){
-            continue;
+        for (int i = shipStartXPos; i <= shipStartXPos; i++){
+            for (int j = shipStartYPos; j <= shipStartYPos+shipLength; j++){
+                board[i][j] = shipLength;
+            }
         }
-            board[i][j] = 1;
-        } 
-    }//Blocker
-    //Ship
-    for (int i = rowStart; i <= rowEnd; i++){
-        for (int j = colStart; j <= colEnd; j++){
-            board[i][j] = shipLength;
-        }        
-    }//Ship
+        break;
+    //bottom
+    case 1:
+        printf("bottom enterDirection\n");
+        shipStartXPos = getStartRowInput();
+        shipStartYPos = getStartColInput();
+        for (int i = shipStartXPos-1; i <= shipStartXPos+shipLength+1  ; i++){
+            for (int j = shipStartYPos-1; j <= shipStartYPos+1; j++){
+                board[i][j] = 1;
+            }
+        }
+        for (int i = shipStartXPos; i <= shipStartXPos+shipLength; i++){
+            for (int j = shipStartYPos; j <= shipStartYPos; j++){
+                board[i][j] = shipLength;
+            }
+        }
+        break;
+    //top
+    case 2:
+        printf("top enterDirection\n");
+        shipStartXPos = getStartRowInput()-shipLength;
+        shipStartYPos = getStartColInput();
+        for (int i = shipStartXPos-1; i <= shipStartXPos+shipLength+1  ; i++){
+            for (int j = shipStartYPos-1; j <= shipStartYPos+1; j++){
+                board[i][j] = 1;
+            }
+        }
+        for (int i = shipStartXPos; i <= shipStartXPos+shipLength; i++){
+            for (int j = shipStartYPos; j <= shipStartYPos; j++){
+                board[i][j] = shipLength;
+            }
+        }
+        break;
+    //left
+    case 3:
+        printf("left enterDirection\n");
+        shipStartXPos = getStartRowInput();
+        shipStartYPos = getStartColInput()-shipLength;
+        for (int i = shipStartXPos-1; i <= shipStartXPos+1  ; i++){
+            for (int j = shipStartYPos-1; j <= shipStartYPos+shipLength+1; j++){
+                board[i][j] = 1;
+            }
+        }
+        for (int i = shipStartXPos; i <= shipStartXPos; i++){
+            for (int j = shipStartYPos; j <= shipStartYPos+shipLength; j++){
+                board[i][j] = shipLength;
+            }
+        }
+        break;
+    default:
+        printf("Something went wrong\n");
+        break;
+    }    
+}
+
+//update version 2
+void drawShip(int shipLenth){
+    //1. check if entered Field is blocked
+    //2. check if it can be placed
+    //3. player choose direction
+    //4. block around the ship
+    //5. place down the ship
+    //6. print the updated Board
+
+    //1.
+    checkBlockedField();
+    int rowStart = getStartRowInput();
+    int colStart = getStartColInput();
+
+    //2.
+    //checkShipDirections(rowStart, colStart, shipLenth);
+
+    //3. + 4. + 5.
+    int direction;
+    printf("Please enter your Direction \n0=right, 1=bottom, 2=top, 3=left\n");
+    scanf("%d", &direction);
+    enterSelectedDirection(direction, shipLenth);
+    //6.
     printBoard();
 }
 
+//issue 2
 void drawShips(){
-    //for (int i = 4; i > 0; i--){
+    // convert i from 3 to 4
+    //for (int i = 3; i > 0; i--){
     //    printf("\nShiplength: 2\n");
     //    drawShip(2);
     //}
-    //for (int i = 3; i > 0; i--){
+    // convert i from 2 to 3
+    for (int i = 2; i > 0; i--){
         printf("\nShiplength: 3\n");
         drawShip(3);
-    /*}
+    }
+    /*
     for (int i = 2; i > 0; i--){
         printf("\nShiplength: 4\n");
         drawShip(4);
@@ -318,15 +400,22 @@ void playerFires(){
     scanf("%s", & fireField);
 }
 
-void blockAround(){
-    for (int i = getFireRowInput()-1; i <= getFireRowInput()+1; i++){
-        for (int j = getFireColInput()-1; j <= getFireColInput()+1; j++){
-            enemyBoardPlayer1[i][j] = ownBoardPlayer2[i][j];
+void blockAround(int row, int col){
+    if (player == 1){
+        for (int i = row-1; i <= row+1; i++){
+            for (int j = col-1; j <= col+1; j++){
+                enemyBoardPlayer1[i][j] = ownBoardPlayer2[i][j];
+            }
+        }
+    } else if (player == 2){
+        for (int i = row-1; i <= row+1; i++){
+            for (int j = col-1; j <= col+1; j++){
+                enemyBoardPlayer2[i][j] = ownBoardPlayer1[i][j];
+            }
         }
     }
 }
 
-//need update!
 void blockAroundShip(int shipLength){
     if (player == 1){
     int rowCount = 0;
@@ -338,7 +427,7 @@ void blockAroundShip(int shipLength){
             while (enemyBoardPlayer1[getFireRowInput()-i][getFireColInput()] == shipLength){
                 rowCount++;
                 printf("left %d", rowCount);
-                blockAround();
+                blockAround(getFireRowInput()-i, getFireColInput());
                 i++;
             }
             if (rowCount == shipLength){
@@ -349,7 +438,7 @@ void blockAroundShip(int shipLength){
             while (enemyBoardPlayer1[getFireRowInput()+j][getFireColInput()] == shipLength){
                 rowCount++;
                 printf("right %d", rowCount);
-                blockAround();
+                blockAround(getFireRowInput()+j, getFireColInput());
                 j++;
             }
         }
@@ -360,7 +449,7 @@ void blockAroundShip(int shipLength){
             while (enemyBoardPlayer1[getFireRowInput()][getFireColInput()-i] == shipLength){
                 colCount++;
                 printf("left %d", colCount);
-                blockAround();
+                blockAround(getFireRowInput(), getFireColInput()-i);
                 i++;
             }
             if (colCount == shipLength){
@@ -371,7 +460,7 @@ void blockAroundShip(int shipLength){
             while (enemyBoardPlayer1[getFireRowInput()][getFireColInput()+j] == shipLength){
                 colCount++;
                 printf("right %d", colCount);
-                blockAround();
+                blockAround(getFireRowInput(), getFireColInput()+j);
                 j++;
             }
         }
@@ -385,7 +474,7 @@ void blockAroundShip(int shipLength){
             while (enemyBoardPlayer2[getFireRowInput()-i][getFireColInput()] == shipLength){
                 rowCount++;
                 printf("left %d", rowCount);
-                blockAround();
+                blockAround(getFireRowInput()-i, getFireColInput());
                 i++;
             }
             if (rowCount == shipLength){
@@ -396,7 +485,7 @@ void blockAroundShip(int shipLength){
             while (enemyBoardPlayer2[getFireRowInput()+j][getFireColInput()] == shipLength){
                 rowCount++;
                 printf("right %d", rowCount);
-                blockAround();
+                blockAround(getFireRowInput()+j, getFireColInput());
                 j++;
             }
         }
@@ -407,7 +496,7 @@ void blockAroundShip(int shipLength){
             while (enemyBoardPlayer2[getFireRowInput()][getFireColInput()-i] == shipLength){
                 colCount++;
                 printf("left %d", colCount);
-                blockAround();
+                blockAround(getFireRowInput(), getFireColInput()-i);
                 i++;
             }
             if (colCount == shipLength){
@@ -418,13 +507,14 @@ void blockAroundShip(int shipLength){
             while (enemyBoardPlayer2[getFireRowInput()][getFireColInput()+j] == shipLength){
                 colCount++;
                 printf("right %d", colCount);
-                blockAround();
+                blockAround(getFireRowInput(), getFireColInput()+j);
                 j++;
             }
         }
     }    
 }
 
+//issue 4
 void checkSunkenShip(){
     int shipLength = 0;
     int count = 0;
@@ -436,7 +526,6 @@ void checkSunkenShip(){
             }
         }
         if (count == shipLength){
-            //need update!
             blockAroundShip(shipLength);
             printf("Ship has sunk\n");
             totalPlayer1++;
@@ -449,7 +538,6 @@ void checkSunkenShip(){
             }
         }
         if (count == shipLength){
-            //need update!
             blockAroundShip(shipLength);
             printf("Ship has sunk\n");
             totalPlayer1++;
@@ -464,7 +552,6 @@ void checkSunkenShip(){
             }
         }
         if (count == shipLength){
-            //need update!
             blockAroundShip(shipLength);
             printf("Ship has sunk\n");
             totalPlayer2++;
@@ -477,7 +564,6 @@ void checkSunkenShip(){
             }
         }
         if (count == shipLength){
-            //need update!
             blockAroundShip(shipLength);
             printf("Ship has sunk\n");
             totalPlayer2++;
@@ -546,6 +632,7 @@ void changePlayer(){
     }
 }
 
+//issue 1
 void printStatistics(){
     printf("   P1   P2");
 
@@ -554,35 +641,13 @@ void printStatistics(){
         printf("%c ", rowTitlesStatistics[row]);
         printf("|");
         for (int col = 0; col < 2; col++){
-            if (boardStatistics[row][col] == 0){
-                printf(" 0 ");
-            }else if (boardStatistics[row][col] == 1){
-                printf(" 1 ");
-            }else if (boardStatistics[row][col] == 2){
-                printf(" 2 ");
-            }else if (boardStatistics[row][col] == 3){
-                printf(" 3 ");
-            }else if (boardStatistics[row][col] == 4){
-                printf(" 4 ");
-            }else if (boardStatistics[row][col] == 5){
-                printf(" 5 ");
-            }else if (boardStatistics[row][col] == 6){
-                printf(" 6 ");
-            }else if (boardStatistics[row][col] == 7){
-                printf(" 7 ");
-            }else if (boardStatistics[row][col] == 8){
-                printf(" 8 ");
-            }else if (boardStatistics[row][col] == 9){
-                printf(" 9 ");
-            }else if (boardStatistics[row][col] == 10){
-                printf(" 10");
-            }
-            printf("|");
+            printf(" %d |", boardStatistics[row][col]);
         }
     printf("\n  -----------\n");
     }
 }
 
+//issue 4
 void play(){
     do{
         checkPlayer();
@@ -590,19 +655,21 @@ void play(){
             printEnemy();
             playerFires();
             checkHit();
-            // convert 1 to 10 if more ships
-            if (totalPlayer1 == 1 || totalPlayer2 == 1){
+            // convert 2 to 10 if more ships
+            if (totalPlayer1 == 2 || totalPlayer2 == 2){
                 break;
             }
         } while (hitChecker);
-        if (totalPlayer1 == 1 || totalPlayer2 == 1){
+        // convert 2 to 10 if more ships
+        if (totalPlayer1 == 2 || totalPlayer2 == 2){
             break;
         }
         //printStatistics();
         changePlayer();
-        // convert 1 to 10 if more ships
-    } while (totalPlayer1 != 1 || totalPlayer2 != 1);
-    printf("Winner");
+        // convert 2 to 10 if more ships
+    } while (totalPlayer1 != 2 || totalPlayer2 != 2);
+    printEnemy();
+    printf("Winner is Player %d", player);
     //Print Boards
 }
 
@@ -644,8 +711,7 @@ void printAllBords(){
     printf("\n");
 }
 
-//need update!
-//In play --> checkHit --> enterHit --> checkSunkenShip --> blockAround!!!
+//issue 3
 int main (){
     printf(" --- Welcom to sink ships --- \n");
     firstPlayer();
@@ -653,3 +719,13 @@ int main (){
     play();
     //printAllBords();
 }
+
+/*
+    issues:
+    1- print statistics
+    2- darw ships --> convert 2 to 10 if more ships
+                  --> add undo
+                  --> can place up or left
+    3- winner --> print bord
+    4- play --> convert 1 to 10 if more ships
+*/
