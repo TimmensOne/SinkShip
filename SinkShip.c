@@ -316,8 +316,16 @@ void enterSelectedDirection(int direction, int shipLength)
         shipStartYPos = getStartColInput();
         for (int i = shipStartXPos - 1; i <= shipStartXPos + 1; i++)
         {
+            if (i < 0 && i > 9)
+            {
+                printf("Continue i right");
+            }
             for (int j = shipStartYPos - 1; j <= shipStartYPos + shipLength; j++)
             {
+                if (i < 0 && i > 9)
+                {
+                    printf("Continue j right");
+                }
                 board[i][j] = 1;
             }
         }
@@ -336,8 +344,16 @@ void enterSelectedDirection(int direction, int shipLength)
         shipStartYPos = getStartColInput();
         for (int i = shipStartXPos - 1; i <= shipStartXPos + shipLength; i++)
         {
+            if (i < 0 && i > 9)
+            {
+                printf("Continue i bottom");
+            }
             for (int j = shipStartYPos - 1; j <= shipStartYPos + 1; j++)
             {
+                if (i < 0 && i > 9)
+                {
+                    printf("Continue j bottom");
+                }
                 board[i][j] = 1;
             }
         }
@@ -356,8 +372,16 @@ void enterSelectedDirection(int direction, int shipLength)
         shipStartYPos = getStartColInput() - shipLength;
         for (int i = shipStartXPos - 1; i <= shipStartXPos; i++)
         {
+            if (i < 0 && i > 9)
+            {
+                printf("Continue i left");
+            }
             for (int j = shipStartYPos - 1; j <= shipStartYPos + shipLength + 1; j++)
             {
+                if (i < 0 && i > 9)
+                {
+                    printf("Continue j left");
+                }
                 board[i][j] = 1;
             }
         }
@@ -376,8 +400,16 @@ void enterSelectedDirection(int direction, int shipLength)
         shipStartYPos = getStartColInput();
         for (int i = shipStartXPos - 1; i <= shipStartXPos + shipLength + 1; i++)
         {
+            if (i < 0 && i > 9)
+            {
+                printf("Continue i top");
+            }
             for (int j = shipStartYPos - 1; j <= shipStartYPos + 1; j++)
             {
+                if (i < 0 && i > 9)
+                {
+                    printf("Continue j top");
+                }
                 board[i][j] = 1;
             }
         }
@@ -397,7 +429,6 @@ void enterSelectedDirection(int direction, int shipLength)
 
 void checkBlockedField(int shipLength)
 {
-    int shipDirection;
     do
     {
         do
@@ -988,4 +1019,5 @@ int main()
                   --> can place up or left
     3- winner --> print bord
     4- play --> convert 1 to 10 if more ships
+    5- blockAround (out of array)
 */
