@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-//Version: 1.0.3. (Beta)
+//Version: 1.0.6. (Open Beta)
 //Owner: TimmensOne
 
-bool checkForWinner = false;
+//boolean
 bool hitChecker;
 bool directionLeft;
 bool directionRight;
@@ -12,6 +12,7 @@ bool directionTop;
 bool directionBottom;
 bool boolShipDirection;
 
+//int [][]
 int board[10][10];
 int ownBoardPlayer1[10][10];
 int ownBoardPlayer2[10][10];
@@ -19,14 +20,17 @@ int enemyBoardPlayer1[10][10];
 int enemyBoardPlayer2[10][10];
 int boardStatistics[5][2];
 
+//char []
 char shipStart[3];
 char fireField[2];
 
+//const char []
 const char rowTitles[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
 const char colTitles[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'};
 const char directionsTitels[] = {'r', 'b', 'l', 't'};
 const char rowTitlesStatistics[] = {'t', '2', '3', '4', '5'};
 
+//int
 int player = 1;
 int totalPlayer1 = 0;
 int totalPlayer2 = 0;
@@ -34,7 +38,6 @@ int totalPlayer2 = 0;
 void printBoard()
 {
     printf("\n    %c   %c   %c   %c   %c   %c   %c   %c   %c   %c", colTitles[0], colTitles[1], colTitles[2], colTitles[3], colTitles[4], colTitles[5], colTitles[6], colTitles[7], colTitles[8], colTitles[9]);
-
     printf("\n  -----------------------------------------\n");
     for (int row = 0; row < 10; row++)
     {
@@ -239,17 +242,15 @@ bool checkShipDirection(int shipLength)
 
 void enterSelectedDirection(int direction, int shipLength)
 {
-    int shipStartXPos;
-    int shipStartYPos;
+    int shipStartYPos = getStartRowInput();
+    int shipStartXPos = getStartColInput();
     switch (direction)
     {
     //right
     case 0:
-        shipStartXPos = getStartRowInput();
-        shipStartYPos = getStartColInput();
-        for (int i = shipStartXPos - 1; i <= shipStartXPos + 1; i++)
+        for (int i = shipStartYPos - 1; i <= shipStartYPos + 1; i++)
         {
-            for (int j = shipStartYPos - 1; j <= shipStartYPos + shipLength; j++)
+            for (int j = shipStartXPos - 1; j <= shipStartXPos + shipLength; j++)
             {
                 if (i >= 0 && i <= 9)
                 {
@@ -260,9 +261,9 @@ void enterSelectedDirection(int direction, int shipLength)
                 }
             }
         }
-        for (int i = shipStartXPos; i <= shipStartXPos; i++)
+        for (int i = shipStartYPos; i <= shipStartYPos; i++)
         {
-            for (int j = shipStartYPos; j <= shipStartYPos + shipLength - 1; j++)
+            for (int j = shipStartXPos; j <= shipStartXPos + shipLength - 1; j++)
             {
                 board[i][j] = shipLength;
             }
@@ -270,11 +271,9 @@ void enterSelectedDirection(int direction, int shipLength)
         break;
     //bottom
     case 1:
-        shipStartXPos = getStartRowInput();
-        shipStartYPos = getStartColInput();
-        for (int i = shipStartXPos - 1; i <= shipStartXPos + shipLength; i++)
+        for (int i = shipStartYPos - 1; i <= shipStartYPos + shipLength; i++)
         {
-            for (int j = shipStartYPos - 1; j <= shipStartYPos + 1; j++)
+            for (int j = shipStartXPos - 1; j <= shipStartXPos + 1; j++)
             {
                 if (i >= 0 && i <= 9)
                 {
@@ -285,9 +284,9 @@ void enterSelectedDirection(int direction, int shipLength)
                 }
             }
         }
-        for (int i = shipStartXPos; i <= shipStartXPos + shipLength - 1; i++)
+        for (int i = shipStartYPos; i <= shipStartYPos + shipLength - 1; i++)
         {
-            for (int j = shipStartYPos; j <= shipStartYPos; j++)
+            for (int j = shipStartXPos; j <= shipStartXPos; j++)
             {
                 board[i][j] = shipLength;
             }
@@ -295,11 +294,10 @@ void enterSelectedDirection(int direction, int shipLength)
         break;
     //left
     case 2:
-        shipStartXPos = getStartRowInput();
-        shipStartYPos = getStartColInput() - shipLength + 1;         //add +1
-        for (int i = shipStartXPos - 1; i <= shipStartXPos + 1; i++) //add +1
+        shipStartXPos -= shipLength + 1;
+        for (int i = shipStartYPos - 1; i <= shipStartYPos + 1; i++)
         {
-            for (int j = shipStartYPos - 1; j <= shipStartYPos + shipLength + 1; j++)
+            for (int j = shipStartXPos - 1; j <= shipStartXPos + shipLength + 1; j++)
             {
                 if (i >= 0 && i <= 9)
                 {
@@ -310,9 +308,9 @@ void enterSelectedDirection(int direction, int shipLength)
                 }
             }
         }
-        for (int i = shipStartXPos; i <= shipStartXPos; i++)
+        for (int i = shipStartYPos; i <= shipStartYPos; i++)
         {
-            for (int j = shipStartYPos; j <= shipStartYPos + shipLength - 1; j++) //add -1
+            for (int j = shipStartXPos; j <= shipStartXPos + shipLength - 1; j++)
             {
                 board[i][j] = shipLength;
             }
@@ -320,11 +318,10 @@ void enterSelectedDirection(int direction, int shipLength)
         break;
     //top
     case 3:
-        shipStartXPos = getStartRowInput() - shipLength + 1; //add +1
-        shipStartYPos = getStartColInput();
-        for (int i = shipStartXPos - 1; i <= shipStartXPos + shipLength + 1; i++)
+        shipStartYPos -= shipLength + 1;
+        for (int i = shipStartYPos - 1; i <= shipStartYPos + shipLength + 1; i++)
         {
-            for (int j = shipStartYPos - 1; j <= shipStartYPos + 1; j++)
+            for (int j = shipStartXPos - 1; j <= shipStartXPos + 1; j++)
             {
                 if (i >= 0 && i <= 9)
                 {
@@ -335,9 +332,9 @@ void enterSelectedDirection(int direction, int shipLength)
                 }
             }
         }
-        for (int i = shipStartXPos; i <= shipStartXPos + shipLength - 1; i++) //add -1
+        for (int i = shipStartYPos; i <= shipStartYPos + shipLength - 1; i++)
         {
-            for (int j = shipStartYPos; j <= shipStartYPos; j++)
+            for (int j = shipStartXPos; j <= shipStartXPos; j++)
             {
                 board[i][j] = shipLength;
             }
@@ -349,7 +346,7 @@ void enterSelectedDirection(int direction, int shipLength)
     }
 }
 
-void checkBlockedField(int shipLength)
+void drawSingleShip(int shipLength)
 {
     do
     {
@@ -361,18 +358,13 @@ void checkBlockedField(int shipLength)
             {
                 printf("Pleas try Again. This Field is blocked\n");
             }
-            else
-            {
-                printf("Perfect\n");
-            }
         } while (board[getStartRowInput()][getStartColInput()] != 0);
+        if (!checkShipDirection(shipLength))
+        {
+            printf("Some Fields are blocked. Try Again!");
+        }
     } while (!checkShipDirection(shipLength));
     enterSelectedDirection(getShipDirection(), shipLength);
-}
-
-void drawShip(int shipLength)
-{
-    checkBlockedField(shipLength);
     printBoard();
 }
 
@@ -381,20 +373,20 @@ void drawShips()
     for (int i = 4; i > 0; i--)
     {
         printf("\nShiplength: 2\n");
-        drawShip(2);
+        drawSingleShip(2);
     }
     for (int i = 3; i > 0; i--)
     {
         printf("\nShiplength: 3\n");
-        drawShip(3);
+        drawSingleShip(3);
     }
     for (int i = 2; i > 0; i--)
     {
         printf("\nShiplength: 4\n");
-        drawShip(4);
+        drawSingleShip(4);
     }
     printf("\nShiplength: 5\n");
-    drawShip(5);
+    drawSingleShip(5);
 }
 
 void resetBoard()
@@ -506,17 +498,14 @@ void blockAround(int row, int col)
         {
             for (int j = col - 1; j <= col + 1; j++)
             {
-                enemyBoardPlayer1[i][j] = ownBoardPlayer2[i][j];
-            }
-        }
-    }
-    else if (player == 2)
-    {
-        for (int i = row - 1; i <= row + 1; i++)
-        {
-            for (int j = col - 1; j <= col + 1; j++)
-            {
-                enemyBoardPlayer2[i][j] = ownBoardPlayer1[i][j];
+                if (player == 1)
+                {
+                    enemyBoardPlayer1[i][j] = ownBoardPlayer2[i][j];
+                }
+                else if (player == 2)
+                {
+                    enemyBoardPlayer2[i][j] = ownBoardPlayer1[i][j];
+                }
             }
         }
     }
@@ -712,7 +701,7 @@ void checkSunkenShip()
             count = 0;
         }
     }
-    //need update!
+    //is subject to changes
     //boardStatistics[player-1][shipLength] += 1;
 }
 
@@ -749,12 +738,7 @@ void checkHit()
 {
     if (player == 1)
     {
-        if (ownBoardPlayer2[getFireRowInput()][getFireColInput()] == 0)
-        {
-            hitChecker = false;
-            enterNoHit();
-        }
-        else if (ownBoardPlayer2[getFireRowInput()][getFireColInput()] == 1)
+        if (ownBoardPlayer2[getFireRowInput()][getFireColInput()] == 0 || ownBoardPlayer2[getFireRowInput()][getFireColInput()] == 1)
         {
             hitChecker = false;
             enterNoHit();
@@ -767,12 +751,7 @@ void checkHit()
     }
     else if (player == 2)
     {
-        if (ownBoardPlayer1[getFireRowInput()][getFireColInput()] == 0)
-        {
-            hitChecker = false;
-            enterNoHit();
-        }
-        else if (ownBoardPlayer1[getFireRowInput()][getFireColInput()] == 1)
+        if (ownBoardPlayer1[getFireRowInput()][getFireColInput()] == 0 || ownBoardPlayer1[getFireRowInput()][getFireColInput()] == 1)
         {
             hitChecker = false;
             enterNoHit();
@@ -799,6 +778,7 @@ void changePlayer()
     }
 }
 
+//is subject to changes
 void printStatistics()
 {
     printf("   P1   P2");
@@ -835,60 +815,10 @@ void play()
         {
             break;
         }
-        //printStatistics();
         changePlayer();
     } while (totalPlayer1 != 10 || totalPlayer2 != 10);
     printEnemy();
-    printf("Winner is Player %d", player);
-}
-
-void printAllBords()
-{
-    for (int i = 0; i < 10; i++)
-    {
-        for (int j = 0; j < 10; j++)
-        {
-            printf("%d", board[i][j]);
-        }
-        printf("\n");
-    }
-    printf("\n");
-    for (int i = 0; i < 10; i++)
-    {
-        for (int j = 0; j < 10; j++)
-        {
-            printf("%d", ownBoardPlayer1[i][j]);
-        }
-        printf("\n");
-    }
-    printf("\n");
-    for (int i = 0; i < 10; i++)
-    {
-        for (int j = 0; j < 10; j++)
-        {
-            printf("%d", ownBoardPlayer2[i][j]);
-        }
-        printf("\n");
-    }
-    printf("\n");
-    for (int i = 0; i < 10; i++)
-    {
-        for (int j = 0; j < 10; j++)
-        {
-            printf("%d", enemyBoardPlayer1[i][j]);
-        }
-        printf("\n");
-    }
-    printf("\n");
-    for (int i = 0; i < 10; i++)
-    {
-        for (int j = 0; j < 10; j++)
-        {
-            printf("%d", enemyBoardPlayer2[i][j]);
-        }
-        printf("\n");
-    }
-    printf("\n");
+    printf("Winner is Player %d\n", player);
 }
 
 int main()
@@ -898,3 +828,9 @@ int main()
     secondPlayer();
     play();
 }
+
+/*
+    issues sort by priority:
+        1- Fixing Bugs      --> currently nothing known
+        2- Print Statistics --> printStatistics(); is subject to changes
+*/
