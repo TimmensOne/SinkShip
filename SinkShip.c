@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-//Version: 1.0.0. (Beta)
+//Version: 1.0.3. (Beta)
 //Owner: TimmensOne
 
 bool checkForWinner = false;
@@ -25,11 +25,9 @@ char fireField[2];
 const char rowTitles[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
 const char colTitles[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'};
 const char directionsTitels[] = {'r', 'b', 'l', 't'};
-
 const char rowTitlesStatistics[] = {'t', '2', '3', '4', '5'};
 
 int player = 1;
-
 int totalPlayer1 = 0;
 int totalPlayer2 = 0;
 
@@ -125,7 +123,7 @@ int getFireColInput()
     return 0;
 }
 
-bool checkLeft(int shipLength)
+bool checkTop(int shipLength)
 {
     if (getStartRowInput() - shipLength + 1 >= 0)
     {
@@ -137,20 +135,18 @@ bool checkLeft(int shipLength)
             }
             else
             {
-                directionLeft = false;
-                printf("PosLeft isn't Possible");
+                return false;
             }
         }
     }
     else
     {
-        directionLeft = false;
-        printf("PosLeft isn't Possible");
+        return false;
     }
     return directionLeft;
 }
 
-bool checkRight(int shipLength)
+bool checkBottom(int shipLength)
 {
     if (getStartRowInput() + shipLength - 1 <= 9)
     {
@@ -162,20 +158,18 @@ bool checkRight(int shipLength)
             }
             else
             {
-                printf("PosRight isn't Possible");
                 return false;
             }
         }
     }
     else
     {
-        printf("PosRight isn't Possible");
         return false;
     }
     return directionRight;
 }
 
-bool checkTop(int shipLength)
+bool checkLeft(int shipLength)
 {
     if (getStartColInput() - shipLength + 1 >= 0)
     {
@@ -187,22 +181,20 @@ bool checkTop(int shipLength)
             }
             else
             {
-                directionTop = false;
-                printf("PosTop isn't Possible");
+                return false;
             }
         }
     }
     else
     {
-        directionTop = false;
-        printf("PosTop isn't Possible");
+        return false;
     }
     return directionTop;
 }
 
-bool checkBottom(int shipLength)
+bool checkRight(int shipLength)
 {
-    if (getStartColInput()+shipLength-1 <= 9)
+    if (getStartColInput() + shipLength - 1 <= 9)
     {
         for (int i = 0; i < shipLength; i++)
         {
@@ -212,15 +204,13 @@ bool checkBottom(int shipLength)
             }
             else
             {
-                directionBottom = false;
-                printf("PosBottom isn't Possible");
+                return false;
             }
         }
     }
     else
     {
-        directionBottom = false;
-        printf("PosBottom isn't Possible");
+        return false;
     }
     return directionBottom;
 }
@@ -229,26 +219,21 @@ bool checkShipDirection(int shipLength)
 {
     switch (getShipDirection())
     {
-    //right
     case 0:
-        boolShipDirection = checkBottom(shipLength);
-        break;
-
-    //bottom
-    case 1:
         boolShipDirection = checkRight(shipLength);
         break;
 
-    //left
-    case 2:
-        boolShipDirection = checkTop(shipLength);
+    case 1:
+        boolShipDirection = checkBottom(shipLength);
         break;
-    //top
-    case 3:
+
+    case 2:
         boolShipDirection = checkLeft(shipLength);
         break;
+    case 3:
+        boolShipDirection = checkTop(shipLength);
+        break;
     }
-
     return boolShipDirection;
 }
 
@@ -260,7 +245,6 @@ void enterSelectedDirection(int direction, int shipLength)
     {
     //right
     case 0:
-        printf("right enterDirection\n");
         shipStartXPos = getStartRowInput();
         shipStartYPos = getStartColInput();
         for (int i = shipStartXPos - 1; i <= shipStartXPos + 1; i++)
@@ -269,10 +253,10 @@ void enterSelectedDirection(int direction, int shipLength)
             {
                 if (i >= 0 && i <= 9)
                 {
-                    if (j >= 0 && j <=9)
+                    if (j >= 0 && j <= 9)
                     {
                         board[i][j] = 1;
-                    } 
+                    }
                 }
             }
         }
@@ -286,7 +270,6 @@ void enterSelectedDirection(int direction, int shipLength)
         break;
     //bottom
     case 1:
-        printf("bottom enterDirection\n");
         shipStartXPos = getStartRowInput();
         shipStartYPos = getStartColInput();
         for (int i = shipStartXPos - 1; i <= shipStartXPos + shipLength; i++)
@@ -295,10 +278,10 @@ void enterSelectedDirection(int direction, int shipLength)
             {
                 if (i >= 0 && i <= 9)
                 {
-                    if (j >= 0 && j <=9)
+                    if (j >= 0 && j <= 9)
                     {
                         board[i][j] = 1;
-                    } 
+                    }
                 }
             }
         }
@@ -312,25 +295,24 @@ void enterSelectedDirection(int direction, int shipLength)
         break;
     //left
     case 2:
-        printf("left enterDirection\n");
         shipStartXPos = getStartRowInput();
-        shipStartYPos = getStartColInput() - shipLength +1; //add +1
-        for (int i = shipStartXPos - 1; i <= shipStartXPos +1; i++) //add +1
+        shipStartYPos = getStartColInput() - shipLength + 1;         //add +1
+        for (int i = shipStartXPos - 1; i <= shipStartXPos + 1; i++) //add +1
         {
             for (int j = shipStartYPos - 1; j <= shipStartYPos + shipLength + 1; j++)
             {
                 if (i >= 0 && i <= 9)
                 {
-                    if (j >= 0 && j <=9)
+                    if (j >= 0 && j <= 9)
                     {
                         board[i][j] = 1;
-                    } 
+                    }
                 }
             }
         }
         for (int i = shipStartXPos; i <= shipStartXPos; i++)
         {
-            for (int j = shipStartYPos; j <= shipStartYPos + shipLength -1; j++) //add -1
+            for (int j = shipStartYPos; j <= shipStartYPos + shipLength - 1; j++) //add -1
             {
                 board[i][j] = shipLength;
             }
@@ -338,8 +320,7 @@ void enterSelectedDirection(int direction, int shipLength)
         break;
     //top
     case 3:
-        printf("top enterDirection\n");
-        shipStartXPos = getStartRowInput() - shipLength +1; //add +1
+        shipStartXPos = getStartRowInput() - shipLength + 1; //add +1
         shipStartYPos = getStartColInput();
         for (int i = shipStartXPos - 1; i <= shipStartXPos + shipLength + 1; i++)
         {
@@ -347,14 +328,14 @@ void enterSelectedDirection(int direction, int shipLength)
             {
                 if (i >= 0 && i <= 9)
                 {
-                    if (j >= 0 && j <=9)
+                    if (j >= 0 && j <= 9)
                     {
                         board[i][j] = 1;
-                    } 
+                    }
                 }
             }
         }
-        for (int i = shipStartXPos; i <= shipStartXPos + shipLength -1; i++) //add -1
+        for (int i = shipStartXPos; i <= shipStartXPos + shipLength - 1; i++) //add -1
         {
             for (int j = shipStartYPos; j <= shipStartYPos; j++)
             {
@@ -374,7 +355,7 @@ void checkBlockedField(int shipLength)
     {
         do
         {
-            printf("Enter Startposition (e.g. A1):\n");
+            printf("Enter Startposition (e.g. A1r):\n");
             scanf("%s", &shipStart);
             if (board[getStartRowInput()][getStartColInput()] != 0)
             {
@@ -397,7 +378,8 @@ void drawShip(int shipLength)
 
 void drawShips()
 {
-    for (int i = 4; i > 0; i--){
+    for (int i = 4; i > 0; i--)
+    {
         printf("\nShiplength: 2\n");
         drawShip(2);
     }
@@ -406,7 +388,8 @@ void drawShips()
         printf("\nShiplength: 3\n");
         drawShip(3);
     }
-    for (int i = 2; i > 0; i--){
+    for (int i = 2; i > 0; i--)
+    {
         printf("\nShiplength: 4\n");
         drawShip(4);
     }
@@ -553,7 +536,6 @@ void blockAroundShip(int shipLength)
             while (enemyBoardPlayer1[getFireRowInput() - i][getFireColInput()] == shipLength)
             {
                 rowCount++;
-                printf("left %d", rowCount);
                 blockAround(getFireRowInput() - i, getFireColInput());
                 i++;
             }
@@ -566,7 +548,6 @@ void blockAroundShip(int shipLength)
             while (enemyBoardPlayer1[getFireRowInput() + j][getFireColInput()] == shipLength)
             {
                 rowCount++;
-                printf("right %d", rowCount);
                 blockAround(getFireRowInput() + j, getFireColInput());
                 j++;
             }
@@ -579,7 +560,6 @@ void blockAroundShip(int shipLength)
             while (enemyBoardPlayer1[getFireRowInput()][getFireColInput() - i] == shipLength)
             {
                 colCount++;
-                printf("left %d", colCount);
                 blockAround(getFireRowInput(), getFireColInput() - i);
                 i++;
             }
@@ -592,7 +572,6 @@ void blockAroundShip(int shipLength)
             while (enemyBoardPlayer1[getFireRowInput()][getFireColInput() + j] == shipLength)
             {
                 colCount++;
-                printf("right %d", colCount);
                 blockAround(getFireRowInput(), getFireColInput() + j);
                 j++;
             }
@@ -610,7 +589,6 @@ void blockAroundShip(int shipLength)
             while (enemyBoardPlayer2[getFireRowInput() - i][getFireColInput()] == shipLength)
             {
                 rowCount++;
-                printf("left %d", rowCount);
                 blockAround(getFireRowInput() - i, getFireColInput());
                 i++;
             }
@@ -623,7 +601,6 @@ void blockAroundShip(int shipLength)
             while (enemyBoardPlayer2[getFireRowInput() + j][getFireColInput()] == shipLength)
             {
                 rowCount++;
-                printf("right %d", rowCount);
                 blockAround(getFireRowInput() + j, getFireColInput());
                 j++;
             }
@@ -636,7 +613,6 @@ void blockAroundShip(int shipLength)
             while (enemyBoardPlayer2[getFireRowInput()][getFireColInput() - i] == shipLength)
             {
                 colCount++;
-                printf("left %d", colCount);
                 blockAround(getFireRowInput(), getFireColInput() - i);
                 i++;
             }
@@ -649,7 +625,6 @@ void blockAroundShip(int shipLength)
             while (enemyBoardPlayer2[getFireRowInput()][getFireColInput() + j] == shipLength)
             {
                 colCount++;
-                printf("right %d", colCount);
                 blockAround(getFireRowInput(), getFireColInput() + j);
                 j++;
             }
@@ -923,9 +898,3 @@ int main()
     secondPlayer();
     play();
 }
-
-/*
-    issues:
-    1- print statistics
-    2- winner --> print bord
-*/
